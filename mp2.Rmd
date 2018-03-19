@@ -23,8 +23,11 @@ committees = Committee Master File
 contributions = Contributions to Candidates (and other expenditures) from committees
 
 idea
+
 - is there a relaitonship between amount of contribution and being elected?
 
 - which contributor is contributing the most? and is there a contributor which tends to contribute to the winner? and the relation with the transaction type ==> use candidate ids to link to the candidates  
+
+- How different are men and women candidates in general? the amount of contribution, the amount of voting, and the rate of being elected 
 
 
