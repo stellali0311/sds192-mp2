@@ -38,16 +38,16 @@ idea
 
 
 ```{r}
-all_contributions <- contributions %>% 
-  group_by(cand_id) %>%
-  summarize(contribuion_sum = sum(transaction_amt)) 
-  
-candidates_n_contributions <- inner_join(candidates, contributions)
-
-house_elections <- house_elections %>%
-  rename(cand_id = fec_id)
-
-candidates_n_contributions %>% left_join(house_elections, by = "cand_id")
+# all_contributions <- contributions %>% 
+#   group_by(cand_id) %>%
+#   summarize(contribuion_sum = sum(transaction_amt)) 
+#   
+# candidates_n_contributions <- inner_join(candidates, contributions)
+# 
+# house_elections <- house_elections %>%
+#   rename(cand_id = fec_id)
+# 
+# candidates_n_contributions %>% left_join(house_elections, by = "cand_id")
 ```
 
 ```{r}
