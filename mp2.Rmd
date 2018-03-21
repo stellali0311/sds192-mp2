@@ -15,6 +15,9 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+library(tidyverse)
+library(dplyr)
+
 ```
 
 The data set is from 2011-2012.
@@ -33,4 +36,22 @@ idea
 ```{r}
 house_elections <- house_elections %>%
   mutate(winner = ifelse(ge_winner == "W", 1, 0)) 
+house_elections$"ifelse(ge_winner == \"W\", 1, 0)"<- NULL
+house_elections$"winner <- ifelse(ge_winner == \"W\", 1, 0)"<- NULL
 ```
+
+
+```{r}
+all_contributions <- contributions %>% 
+  group_by(cand_id) %>%
+  summarize(contribuion_sum = sum(transaction_amt)) 
+  
+candidates_n_contributions <- inner_join(candidates, contributions)
+
+house_elections <- house_elections %>%
+  rename(cand_id = fec_id)
+
+candidates_n_contributions %>% left_join(house_elections, by = "cand_id")
+```
+
+
