@@ -20,7 +20,7 @@ library(dplyr)
 library(ggplot2)
 
 house_elections <- house_elections %>%
-  rename(cand_id = fec_id )
+  rename(cand_id = fec_id)
 
 ```
 
@@ -95,6 +95,53 @@ most_can <- contributions %>%
 # the data set which describes the most contribution and how many candidates the contributors are supporting 
 money_n_ppl <- inner_join (most_contri, most_can) 
 
+# Looking at the contributor (top 10) and the candidates elecition results
+top_10_contributors <- money_n_ppl %>%
+  head(10)
+
+top_10 <- top_10_contributors$cmte_id
+
+top_10_candi <- contributions %>%
+  filter(top_10)
+
+
+data_sum <- contributions %>% inner_join (house_elections, by = "cand_id")
 
 ```
+
+C00487363 => 20/22 win
+C90011719 => 38/61 win
+C00075820 => 
+
+
+```{r}
+# which contributors supported the most elected candidates 
+winner_num <- data_sum %>%
+  filter(winner == "1") %>%
+  group_by(cmte_id) %>%
+  summarise(sum_win = sum(n_distinct(cand_id)))
+  
+
+# %>% 
+#   group_by(cmte_id) %>%
+#   summarise(n_winner = sum(n_distinct(winner)))
+
+# the sum of candidates who the contributor is suporting 
+all_sum <- data_sum %>%
+  group_by(cmte_id) %>%
+  summarise(sum_can = sum(n_distinct(cand_id)))
+
+# the sum of candidates who has been elected
+rate_elected <- inner_join(winner_num, all_sum) %>%
+  mutate(rate = sum_win/sum_can) %>%
+  arrange(desc(sum_win)) %>%
+  arrange(desc(rate)) 
+  
+
+# a data set that contains the rate of winning the election and the amount of contribution 
+sum_contri <- inner_join(rate_elected, most_contri)
+
+# => there's no relationship between contribution and the rate of the person who will get elected 
+```
+
 
