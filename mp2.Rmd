@@ -30,4 +30,7 @@ idea
 
 - How different are men and women candidates in general? the amount of contribution, the amount of voting, and the rate of being elected 
 
-
+```{r}
+house_elections <- house_elections %>%
+  mutate(winner = ifelse(ge_winner == "W", 1, 0)) 
+```
