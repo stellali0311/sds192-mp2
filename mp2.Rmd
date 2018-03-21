@@ -78,3 +78,23 @@ ggplot(condi_contri, aes(x = contribution_sum, y = general_votes)) + geom_point(
 ```
 
 - ask the general votes and primary votes 
+
+
+The contributors ranking from the most contributor to the least 
+```{r}
+most_contri <- contributions %>%
+  group_by(cmte_id) %>%
+  summarise(sum_trans = sum(transaction_amt)) %>%
+  arrange(desc(sum_trans))
+
+most_can <- contributions %>%
+  group_by(cmte_id) %>%
+  summarise(sum_can = sum(n_distinct(cand_id))) %>%
+  arrange(desc(sum_can))
+
+# the data set which describes the most contribution and how many candidates the contributors are supporting 
+money_n_ppl <- inner_join (most_contri, most_can) 
+
+
+```
+
