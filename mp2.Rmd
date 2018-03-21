@@ -47,6 +47,13 @@ candidates_n_contributions %>% left_join( house_elections, by = "cand_id")
 ```
 
 ```{r}
+all_contributions <- contributions %>% 
+  group_by(cand_id) %>%
+  summarize(contribuion_sum = sum(transaction_amt)) 
 
+house_elections <- house_elections %>%
+  rename(cand_id = fec_id)
+
+condi_contri <- left_join(house_elections, all_contributions)
 ```
 
