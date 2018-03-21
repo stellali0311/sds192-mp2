@@ -17,6 +17,7 @@ load("committees.rda")
 load("contributions.rda")
 library(tidyverse)
 library(dplyr)
+library(ggplot2)
 
 house_elections <- house_elections %>%
   rename(cand_id = fec_id )
@@ -63,9 +64,17 @@ house_elections$"winner <- ifelse(ge_winner == \"W\", 1, 0)"<- NULL
 ```{r}
 all_contributions <- contributions %>% 
   group_by(cand_id) %>%
-  summarize(contribuion_sum = sum(transaction_amt)) 
+  summarize(contribution_sum = sum(transaction_amt)) 
 
 condi_contri <- house_elections %>% left_join(all_contributions, by = "cand_id")
 ```
 >>>>>>> 1aa539b7388934b75252cd1e3589d01fddc7d6e5
 
+```{r}
+mod1 <- lm(general_votes ~ contribution_sum, condi_contri)
+
+summary(mod1)
+ggplot(condi_contri, aes(x = contribution_sum, y = general_votes)) + geom_point()
+```
+
+- ask the general votes and primary votes 
