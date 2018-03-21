@@ -140,8 +140,10 @@ rate_elected <- inner_join(winner_num, all_sum) %>%
 
 # a data set that contains the rate of winning the election and the amount of contribution 
 sum_contri <- inner_join(rate_elected, most_contri)
-
 # => there's no relationship between contribution and the rate of the person who will get elected 
 ```
-
+we could map like contributor to the candidate on the map (if it looks interesting)
+```{r}
+sum_contri %>% filter(sum_win > 20)
+```
 
