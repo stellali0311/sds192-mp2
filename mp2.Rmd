@@ -8,7 +8,7 @@ output: html_document
 
 ## Loading the data
 
-This project is so interesting and relevant to my life!
+This project is so interesting and relevant to my life! 
 
 ```{r, include=FALSE}
 load("house_elections.rda")
@@ -147,3 +147,15 @@ we could map like contributor to the candidate on the map (if it looks interesti
 sum_contri %>% filter(sum_win > 20)
 ```
 
+
+```{r}
+# sum of general votes per state
+house_elections %>%
+  group_by(state) %>%
+  summarise(sum_vote = sum(general_votes))
+
+# sum of contribution for each state
+contributions %>% 
+  group_by(state) %>%
+  summarise(sum_contribution = sum(transaction_amt))
+```
