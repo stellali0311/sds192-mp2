@@ -173,7 +173,7 @@ sum_data <- inner_join(sum_vote, sum_contribution)
 
 
 ```{r}
-
+SchoolData$Grade[SchoolData$Grade==5] <- "Grade Five"
 ```
 
 
