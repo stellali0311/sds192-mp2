@@ -274,4 +274,10 @@ mapping <- ggplot(sum_data, aes(map_id = state)) +
 mapping + fifty_states_inset_boxes()
 ```
 
+```{r}
+# votes per state per party
+party_votes <- house_elections %>%
+  group_by(state, party) %>%
+  summarise(vote_party = sum(general_votes))
+```
 
