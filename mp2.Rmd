@@ -171,32 +171,6 @@ sum_data <- inner_join(sum_vote, sum_contribution)
 ```
 =======
 ```{r}
-<<<<<<< HEAD
-
-sum_data$state[sum_data$state== "ND"] <- "north dakota"
-sum_data$state[sum_data$state== "NE"] <- "nebraska"
-sum_data$state[sum_data$state== "NH"] <- "new hampshire"
-sum_data$state[sum_data$state== "NJ"] <- "new jersey"
-sum_data$state[sum_data$state== "NM"] <- "new mexico"
-sum_data$state[sum_data$state== "NV"] <- "nevada"
-sum_data$state[sum_data$state== "NY"] <- "new york"
-sum_data$state[sum_data$state== "OH"] <- "ohio"
-sum_data$state[sum_data$state== "OK"] <- "oklahoma"
-sum_data$state[sum_data$state== "OR"] <- "oregon"
-sum_data$state[sum_data$state== "PA"] <- "pennsylvania"
-sum_data$state[sum_data$state== "RI"] <- "rhode island"
-sum_data$state[sum_data$state== "SC"] <- "south carolina"
-sum_data$state[sum_data$state== "SD"] <- "south dakota"
-sum_data$state[sum_data$state== "TN"] <- "tennessee"
-sum_data$state[sum_data$state== "TX"] <- "texas"
-sum_data$state[sum_data$state== "UT"] <- "utah"
-sum_data$state[sum_data$state== "VA"] <- "virginia"
-sum_data$state[sum_data$state== "VT"] <- "vermont"
-sum_data$state[sum_data$state== "WA"] <- "washington"
-sum_data$state[sum_data$state== "WI"] <- "wisconsin"
-sum_data$state[sum_data$state== "WV"] <- "west virginia"
-sum_data$state[sum_data$state== "WY"] <- "wyoming"
-=======
 sum_data$state[sum_data$state== "AK"] <- "alaska"
 sum_data$state[sum_data$state== "AL"] <- "alabama"
 sum_data$state[sum_data$state== "AR"] <- "arkansas"
@@ -224,9 +198,30 @@ sum_data$state[sum_data$state== "MO"] <- "missouri"
 sum_data$state[sum_data$state== "MS"] <- "mississippi"
 sum_data$state[sum_data$state== "MT"] <- "montana"
 sum_data$state[sum_data$state== "NC"] <- "north carolina"
+sum_data$state[sum_data$state== "ND"] <- "north dakota"
+sum_data$state[sum_data$state== "NE"] <- "nebraska"
+sum_data$state[sum_data$state== "NH"] <- "new hampshire"
+sum_data$state[sum_data$state== "NJ"] <- "new jersey"
+sum_data$state[sum_data$state== "NM"] <- "new mexico"
+sum_data$state[sum_data$state== "NV"] <- "nevada"
+sum_data$state[sum_data$state== "NY"] <- "new york"
+sum_data$state[sum_data$state== "OH"] <- "ohio"
+sum_data$state[sum_data$state== "OK"] <- "oklahoma"
+sum_data$state[sum_data$state== "OR"] <- "oregon"
+sum_data$state[sum_data$state== "PA"] <- "pennsylvania"
+sum_data$state[sum_data$state== "RI"] <- "rhode island"
+sum_data$state[sum_data$state== "SC"] <- "south carolina"
+sum_data$state[sum_data$state== "SD"] <- "south dakota"
+sum_data$state[sum_data$state== "TN"] <- "tennessee"
+sum_data$state[sum_data$state== "TX"] <- "texas"
+sum_data$state[sum_data$state== "UT"] <- "utah"
+sum_data$state[sum_data$state== "VA"] <- "virginia"
+sum_data$state[sum_data$state== "VT"] <- "vermont"
+sum_data$state[sum_data$state== "WA"] <- "washington"
+sum_data$state[sum_data$state== "WI"] <- "wisconsin"
+sum_data$state[sum_data$state== "WV"] <- "west virginia"
+sum_data$state[sum_data$state== "WY"] <- "wyoming"
 
-
->>>>>>> 4f669430a52b9128a819c94d636d1655d01872ee
 ```
 
 
@@ -271,7 +266,8 @@ mapping <- ggplot(sum_data, aes(map_id = state)) +
   scale_y_continuous(breaks = NULL) +
   labs(x = "", y = "") +
   theme(legend.position = "bottom", 
-        panel.background = element_blank())
+        panel.background = element_blank()) + labs(fill = "Number of Votes")
+  
 
 
 # add border boxes to AK/HI
@@ -281,4 +277,4 @@ mapping + fifty_states_inset_boxes()
 ```
 
 
->>>>>>> 2e2c2fdd436defd770758961ae24e335d6d4edec
+
