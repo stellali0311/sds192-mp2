@@ -18,6 +18,7 @@ load("contributions.rda")
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
+library(fiftystater)
 
 house_elections <- house_elections %>%
   rename(cand_id = fec_id)
@@ -152,20 +153,27 @@ sum_contri %>% filter(sum_win > 20)
 
 <<<<<<< HEAD
 ```{r}
+50_states <-c("A")
+
 # sum of general votes per state
-house_elections %>%
+sum_vote<- house_elections %>%
   group_by(state) %>%
-  summarise(sum_vote = sum(general_votes))
+  summarise(sum_vote = sum(general_votes)) %>%
+  filter(state %in% )
+
 
 # sum of contribution for each state
-contributions %>% 
+sum_contribution <- contributions %>% 
   group_by(state) %>%
   summarise(sum_contribution = sum(transaction_amt))
+
+sum_data <- inner_join(sum_vote, sum_contribution)
 ```
 =======
-Mapping 
+
 ```{r}
-library(fiftystater)
+# Mapping
+
 
 data("fifty_states") # this line is optional due to lazy data loading
 
@@ -188,4 +196,28 @@ p
 p + fifty_states_inset_boxes() 
 
 ```
+
+```{r}
+data("fifty_states") # this line is optional due to lazy data loading
+
+# map_id creates the aesthetic mapping to the state name column in your data
+mapping <- ggplot(sum_data, aes(map_id = state)) + 
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = sum_vote), map = fifty_states) + 
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) + 
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "") +
+  theme(legend.position = "bottom", 
+        panel.background = element_blank())
+
+
+# add border boxes to AK/HI
+mapping + fifty_states_inset_boxes()
+
+#not include VI(virfin islands), PR(Puerto Rico), MP(northern Mariana Islands), GU (Guam), DC(district of columbia), AS(?)
+```
+
+
 >>>>>>> 2e2c2fdd436defd770758961ae24e335d6d4edec
