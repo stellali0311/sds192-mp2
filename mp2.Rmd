@@ -173,7 +173,35 @@ sum_data <- inner_join(sum_vote, sum_contribution)
 
 
 ```{r}
-SchoolData$Grade[SchoolData$Grade==5] <- "Grade Five"
+sum_data$state[sum_data$state== "AK"] <- "alaska"
+sum_data$state[sum_data$state== "AL"] <- "alabama"
+sum_data$state[sum_data$state== "AR"] <- "arkansas"
+sum_data$state[sum_data$state== "AZ"] <- "arizona"
+sum_data$state[sum_data$state== "CA"] <- "california"
+sum_data$state[sum_data$state== "CO"] <- "colorado"
+sum_data$state[sum_data$state== "CT"] <- "connecticut"
+sum_data$state[sum_data$state== "DE"] <- "delaware"
+sum_data$state[sum_data$state== "FL"] <- "florida"
+sum_data$state[sum_data$state== "GA"] <- "georgia"
+sum_data$state[sum_data$state== "HI"] <- "hawaii"
+sum_data$state[sum_data$state== "IA"] <- "lowa"
+sum_data$state[sum_data$state== "ID"] <- "ldaho"
+sum_data$state[sum_data$state== "IL"] <- "illinois"
+sum_data$state[sum_data$state== "IN"] <- "indiana"
+sum_data$state[sum_data$state== "KS"] <- "kansas"
+sum_data$state[sum_data$state== "KY"] <- "kentucky"
+sum_data$state[sum_data$state== "LA"] <- "louisiana"
+sum_data$state[sum_data$state== "MA"] <- "massachusetts"
+sum_data$state[sum_data$state== "MD"] <- "maryland"
+sum_data$state[sum_data$state== "ME"] <- "maine"
+sum_data$state[sum_data$state== "MI"] <- "michigan"
+sum_data$state[sum_data$state== "MN"] <- "minnesota"
+sum_data$state[sum_data$state== "MO"] <- "missouri"
+sum_data$state[sum_data$state== "MS"] <- "mississippi"
+sum_data$state[sum_data$state== "MT"] <- "montana"
+sum_data$state[sum_data$state== "NC"] <- "north carolina"
+
+
 ```
 
 
