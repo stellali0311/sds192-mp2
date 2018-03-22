@@ -139,6 +139,8 @@ sum_contri %>% filter(sum_win > 20)
 ```{r, message=FALSE, warning=FALSE}
 fifty_states <-c("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY" )
 
+house_elections %>% filter(state %in% fifty_states)
+
 # sum of general votes per state
 sum_vote<- house_elections %>%
   group_by(state) %>%
@@ -277,7 +279,31 @@ mapping + fifty_states_inset_boxes()
 ```{r}
 # votes per state per party
 party_votes <- house_elections %>%
-  group_by(state, party) %>%
-  summarise(vote_party = sum(general_votes))
+  filter(state %in% fifty_states)
+
+# %>%
+#   group_by(state, party) %>%
+#   summarise(vote_party = sum(general_votes)) 
+  
+
+ggplot(party_votes, aes(x = party, y = vote_party)) + geom_bar(stat = "identity") + facet_wrap(~state)
 ```
 
+```{r}
+candi_conti <- inner_join(candidates, contributions)
+
+party_contribution <- candi_conti %>%
+  filter(cand_state %in% fifty_states)
+
+# %>%
+#   group_by(state, cand_party_affiliation) %>%
+#   summarise(contri_party = sum(transaction_amt)) 
+  
+
+ggplot(party_contribution, aes(x = cand_party_affiliation, y = contri_party)) + geom_bar(stat = "identity") + facet_wrap(~state)
+```
+
+
+- contribution sum of the states 
+- group by party contribution map per party 
+- see choose one party and see if they have more winner or not 
