@@ -266,7 +266,7 @@ mapping <- ggplot(sum_data, aes(map_id = state)) +
   scale_y_continuous(breaks = NULL) +
   labs(x = "", y = "") +
   theme(legend.position = "bottom", 
-        panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(250000, 6270000,12204357), labels = c("240k","6,270K", "12300K"))
+        panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(250000, 6270000,12204357), labels = c("240k","6270K", "12300K"))
   
 
 
@@ -277,7 +277,21 @@ mapping + fifty_states_inset_boxes()
 ```
 
 ```{r}
+mapping <- ggplot(sum_data, aes(map_id = state)) + 
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = sum_contribution), map = fifty_states) + 
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) + 
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "") +
+  theme(legend.position = "bottom", 
+        panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(1170000, 214200000,425544900), labels = c("240k","214200K", "426000K"))
+  
 
+
+# add border boxes to AK/HI
+mapping + fifty_states_inset_boxes()
 ```
 
 
