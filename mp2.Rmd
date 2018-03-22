@@ -2,15 +2,15 @@
 title: "Mini-Project 2"
 author: "Aoi and Stella"
 date: "March 9, 2018"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 
-## Loading the data
 
-This project is so interesting and relevant to my life! 
 
-```{r, include=FALSE}
+```{r, include=FALSE, messages=FALSE, warning=FALSE}
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
@@ -30,16 +30,10 @@ canditates = Candidate Master File
 committees = Committee Master File
 contributions = Contributions to Candidates (and other expenditures) from committees
 
-idea
-
-- is there a relaitonship between amount of contribution and being elected?
-
-- which contributor is contributing the most? and is there a contributor which tends to contribute to the winner? and the relation with the transaction type ==> use candidate ids to link to the candidates  
-
-- How different are men and women candidates in general? the amount of contribution, the amount of voting, and the rate of being elected 
 
 
-```{r}
+
+```{r, message=FALSE, warning=FALSE}
 # all_contributions <- contributions %>% 
 #   group_by(cand_id) %>%
 #   summarize(contribuion_sum = sum(transaction_amt)) 
@@ -60,29 +54,19 @@ house_elections$"winner <- ifelse(ge_winner == \"W\", 1, 0)"<- NULL
 ```
 
 
-<<<<<<< HEAD
-=======
-```{r}
+
+```{r, message=FALSE, warning=FALSE}
 all_contributions <- contributions %>% 
   group_by(cand_id) %>%
   summarize(contribution_sum = sum(transaction_amt)) 
 
 condi_contri <- house_elections %>% left_join(all_contributions, by = "cand_id")
 ```
->>>>>>> 1aa539b7388934b75252cd1e3589d01fddc7d6e5
-
-```{r}
-mod1 <- lm(general_votes ~ contribution_sum, condi_contri)
-
-summary(mod1)
-ggplot(condi_contri, aes(x = contribution_sum, y = general_votes)) + geom_point()
-```
-
-- ask the general votes and primary votes 
 
 
-The contributors ranking from the most contributor to the least 
-```{r}
+
+```{r, message=FALSE, warning=FALSE}
+#The contributors ranking from the most contributor to the least 
 most_contri <- contributions %>%
   group_by(cmte_id) %>%
   summarise(sum_trans = sum(transaction_amt)) %>%
@@ -117,7 +101,7 @@ C90011719 => 38/61 win
 C00075820 => 
 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # which contributors supported the most elected candidates 
 winner_num <- data_sum %>%
   filter(winner == "1") %>%
@@ -145,14 +129,14 @@ rate_elected <- inner_join(winner_num, all_sum) %>%
 sum_contri <- inner_join(rate_elected, most_contri)
 # => there's no relationship between contribution and the rate of the person who will get elected 
 ```
-we could map like contributor to the candidate on the map (if it looks interesting)
-```{r}
+
+```{r, message=FALSE, warning=FALSE}
 sum_contri %>% filter(sum_win > 20)
 ```
 
 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 fifty_states <-c("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY" )
 
 # sum of general votes per state
@@ -171,7 +155,8 @@ sum_data <- inner_join(sum_vote, sum_contribution)
 ```
 
 
-```{r}
+```{r,message=FALSE, warning=FALSE}
+# changing the the observation name in the sum_data data frame
 sum_data$state[sum_data$state== "AK"] <- "alaska"
 sum_data$state[sum_data$state== "AL"] <- "alabama"
 sum_data$state[sum_data$state== "AR"] <- "arkansas"
@@ -226,9 +211,7 @@ sum_data$state[sum_data$state== "WY"] <- "wyoming"
 ```
 
 
-
-
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Mapping
 
 
@@ -254,7 +237,7 @@ crimes <- data.frame(state = tolower(rownames(USArrests)), USArrests)
 
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 data("fifty_states") # this line is optional due to lazy data loading
 
 # map_id creates the aesthetic mapping to the state name column in your data
@@ -269,15 +252,13 @@ mapping <- ggplot(sum_data, aes(map_id = state)) +
   theme(legend.position = "bottom", 
         panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(250000, 6270000,12204357), labels = c("240k","6270K", "12300K"),low = "#9BF5FF", high = "#53868B")
   
-
-
 # add border boxes to AK/HI
 mapping + fifty_states_inset_boxes()
 
 #not include VI(virfin islands), PR(Puerto Rico), MP(northern Mariana Islands), GU (Guam), DC(district of columbia), AS(?)
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 mapping <- ggplot(sum_data, aes(map_id = state)) + 
   # map points to the fifty_states shape data
   geom_map(aes(fill = sum_contribution), map = fifty_states) + 
@@ -288,10 +269,6 @@ mapping <- ggplot(sum_data, aes(map_id = state)) +
   labs(x = "", y = "") +
   theme(legend.position = "bottom", 
         panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(1170000, 214200000,425544900), labels = c("240k","214200K", "426000K"),low = "#B0E2FF", high = "#607B8B") 
-
-#+ scale_color_continuous()
-  
-# scale_color_continuous 
 
 # add border boxes to AK/HI
 mapping + fifty_states_inset_boxes()
