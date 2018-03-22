@@ -266,7 +266,7 @@ mapping <- ggplot(sum_data, aes(map_id = state)) +
   scale_y_continuous(breaks = NULL) +
   labs(x = "", y = "") +
   theme(legend.position = "bottom", 
-        panel.background = element_blank()) + labs(fill = "Number of Votes")
+        panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(250000, 6270000,12204357), labels = c("240k","6,270K", "12300K"))
   
 
 
@@ -276,5 +276,8 @@ mapping + fifty_states_inset_boxes()
 #not include VI(virfin islands), PR(Puerto Rico), MP(northern Mariana Islands), GU (Guam), DC(district of columbia), AS(?)
 ```
 
+```{r}
+
+```
 
 
