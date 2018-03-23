@@ -424,7 +424,7 @@ wfp_mapping
 
 
 - see choose one party and see if they have more winner or not 
-```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.width = 10, fig.height= 40}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.width = 8, fig.height= 30}
 
 target <- c("R", "D")
 
@@ -454,7 +454,7 @@ RD_plots <- lapply(fifty_states_name, R_n_D)
 
 # RD_plots
 
-do.call("grid.arrange", c(RD_plots, ncol=3))
+do.call("grid.arrange", c(RD_plots, ncol=4))
 
 
 ```
