@@ -424,7 +424,7 @@ wfp_mapping
 
 
 - see choose one party and see if they have more winner or not 
-```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.width = 10, fig.height= 5}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.width = 10, fig.height= 40}
 
 target <- c("R", "D")
 
@@ -445,21 +445,22 @@ RD_party <- rate_rep_dem %>%
   
 ggplot(RD_party, aes(x = party, y = rate_winner)) + 
   geom_bar(stat = "identity") + 
-  labs( x = "Party", y = "Ratio of elected candidates", title = name_arg) + 
-  theme(plot.title = element_text(face = "bold"))
+  labs( x = "Party", y = "Ratio of Winner", title = name_arg) + 
+  theme(plot.title = element_text(face = "bold")) 
+  
 }
 
 RD_plots <- lapply(fifty_states_name, R_n_D)
 
-RD_plots
+# RD_plots
 
-do.call("grid.arrange", c(RD_plots, ncol=4))
-
+do.call("grid.arrange", c(RD_plots, ncol=3))
 
 
 ```
 
-
+***
+[^1]: https://github.com/stellali0311/sds192-mp2.git 
 
 
 
