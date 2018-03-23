@@ -283,7 +283,7 @@ nne_mapping <- ggplot(lib, aes(map_id = cand_state)) +
 
 
 #mappping NPA's contribution
-npa <- party_contribution %>% filter(cand_party_affiliation == "NNE")
+npa <- party_contribution %>% filter(cand_party_affiliation == "NPA")
 npa_mapping <- ggplot(npa, aes(map_id = cand_state)) +
   # map points to the fifty_states shape data
   geom_map(aes(fill = contri_party), map = fifty_states) +
@@ -450,7 +450,7 @@ RD_plots <- lapply(fifty_states_name, R_n_D)
 
 # RD_plots
 
-do.call("grid.arrange", c(RD_plots, ncol=4))
+do.call("grid.arrange", c(RD_plots, ncol=5))
 
 
 ```
