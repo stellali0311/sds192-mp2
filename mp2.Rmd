@@ -24,6 +24,7 @@ library(gridExtra)
 
 
 ```{r}
+# making the list 
 fifty_states_name <-c("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY" )
 
 house_elections <- house_elections %>%
@@ -443,20 +444,9 @@ RD_plots <- lapply(fifty_states_name, R_n_D)
 
 RD_plots
 
-do.call("grid.arrange", c(RD_plots, ncol=5))
+do.call("grid.arrange", c(RD_plots, ncol=4))
 
-#mapping if there is more R winning than D the map turns red and the other way it is blue
 
-# mapping <- ggplot(all_party, aes(map_id = cand_state)) + 
-#   # map points to the fifty_states shape data
-#   geom_map(aes(fill = contri_party), map = fifty_states) + 
-#   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
-#   coord_map() +
-#   scale_x_continuous(breaks = NULL) + 
-#   scale_y_continuous(breaks = NULL) +
-#   labs(x = "", y = "", title = name_arg) +
-#   theme(legend.position = "bottom", 
-#         panel.background = element_blank()) + labs(fill = "Amount of Contribution") 
 
 ```
 
