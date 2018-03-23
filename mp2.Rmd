@@ -446,7 +446,7 @@ grid.arrange( non_mapping, con_mapping, dem_mapping, dfl_mapping, gre_mapping, i
 
 
 - see choose one party and see if they have more winner or not 
-```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.width = 60, fig.height= 27}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.width = 30, fig.height= 15}
 
 target <- c("R", "D")
 
@@ -475,7 +475,7 @@ RD_plots <- lapply(fifty_states_name, R_n_D)
 
 RD_plots
 
-do.call("grid.arrange", c(RD_plots, ncol=7))
+do.call("grid.arrange", c(RD_plots, ncol=5))
 
 #mapping if there is more R winning than D the map turns red and the other way it is blue
 
