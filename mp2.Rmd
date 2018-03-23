@@ -96,9 +96,6 @@ data_sum <- contributions %>% inner_join (house_elections, by = "cand_id")
 
 ```
 
-C00487363 => 20/22 win
-C90011719 => 38/61 win
-C00075820 => 
 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -269,6 +266,9 @@ mapping <- ggplot(sum_data, aes(map_id = state)) +
   labs(x = "", y = "") +
   theme(legend.position = "bottom", 
         panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(1170000, 214200000,425544900), labels = c("240k","214200K", "426000K"),low = "#B0E2FF", high = "#607B8B") 
+
+
+
 
 # add border boxes to AK/HI
 mapping + fifty_states_inset_boxes()
