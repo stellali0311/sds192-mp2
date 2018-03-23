@@ -1,12 +1,10 @@
 ---
-title: "Mini-Project 2"
+title: "Contribution vs State Political Leaning: Which is The Most Crucial Factor for Being Elected"
 author: "Aoi and Stella"
 date: "March 9, 2018"
 output: 
   html_document:
     code_folding: hide
-    
-
 ---
 
 ```{r, include=FALSE, messages=FALSE, warning=FALSE}
@@ -49,7 +47,7 @@ house_elections$"winner <- ifelse(ge_winner == \"W\", 1, 0)"<- NULL
 ```
 
 
-- group by party contribution map per party 
+
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 # join the candidates data and contributions data
 candi_conti <- inner_join(candidates, contributions)
@@ -222,10 +220,6 @@ do.call("grid.arrange", c(RD_plots, ncol=5))
 ```
 
 
-
-
-
-
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 
 # the person who received the most contribution in MA for Republican party
@@ -259,7 +253,11 @@ dem_contri_guy <- candi_conti %>%
 
 ```
 
+```{r}
 
-***
-A footnote [^1] : https://github.com/stellali0311/sds192-mp2.git 
+model1 <- lm()
+```
+
+
+[^1] : https://github.com/stellali0311/sds192-mp2.git 
 
