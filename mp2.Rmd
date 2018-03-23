@@ -373,7 +373,7 @@ unk_mapping <- ggplot(unk, aes(map_id = cand_state)) +
   scale_fill_continuous (breaks = c(100, 140000, 280000), labels = c("0.1K", "140K", "280K"), low = "#B0E2FF", high = "#607B8B")
 
 
-#WEP
+#WFP: 
 wfp <- party_contribution %>% filter(cand_party_affiliation == "WFP")
 wfp_mapping <- ggplot(wfp, aes(map_id = cand_state)) +
   # map points to the fifty_states shape data
@@ -391,7 +391,7 @@ wfp_mapping <- ggplot(wfp, aes(map_id = cand_state)) +
 ```
 
 ```{r}
-grid.arrange( non_mapping, con_mapping, dem_mapping, dfl_mapping, gre_mapping, iap_mapping, ind_mapping, lib_mapping, nne_mapping, npa_mapping, oth_mapping, rep_mapping, sus_mapping, swp_mapping, unk_mapping, wfp_mapping, nrow = 9)
+# grid.arrange( non_mapping, con_mapping, dem_mapping, dfl_mapping, gre_mapping, iap_mapping, ind_mapping, lib_mapping, nne_mapping, npa_mapping, oth_mapping, rep_mapping, sus_mapping, swp_mapping, unk_mapping, wfp_mapping, nrow = 9)
 
 # non_mapping
 # con_mapping
@@ -411,38 +411,6 @@ grid.arrange( non_mapping, con_mapping, dem_mapping, dfl_mapping, gre_mapping, i
 # wfp_mapping
 ```
 
-```{r}
-# #make function
-# 
-#   
-# contribution_party <- function(name_arg) {
-#   
-# all_party <- party_contribution %>%
-#   filter(cand_party_affiliation == name_arg)
-# 
-# 
-# 
-# mapping <- ggplot(all_party, aes(map_id = cand_state)) + 
-#   # map points to the fifty_states shape data
-#   geom_map(aes(fill = contri_party), map = fifty_states) + 
-#   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
-#   coord_map() +
-#   scale_x_continuous(breaks = NULL) + 
-#   scale_y_continuous(breaks = NULL) +
-#   labs(x = "", y = "", title = name_arg) +
-#   theme(legend.position = "bottom", 
-#         panel.background = element_blank()) + labs(fill = "Amount of Contribution") 
-# 
-# 
-# }
-# 
-# #
-# #+ geom_text(data = fifty_statesaes(x = long, y = fifty_states$lat, label = state)) + geom_text(data= sum_data, alpha = 1, color = "black") + scale_fill_continuous( low = "#B0E2FF", high = "#607B8B")
-# 
-# party_plots <- lapply(parties, contribution_party)
-# 
-# party_plots
-```
 
 
 - see choose one party and see if they have more winner or not 
@@ -499,115 +467,10 @@ do.call("grid.arrange", c(RD_plots, ncol=5))
 
 
 
--------------------------------------------------------------------
 
 
 
-
-
-
-```{r}
-# mapping <- ggplot(party_contribution, aes(map_id = cand_state)) +
-#   # map points to the fifty_states shape data
-#   geom_map(aes(fill = contri_party), map = fifty_states) +
-#   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
-#   coord_map() +
-#   scale_x_continuous(breaks = NULL) +
-#   scale_y_continuous(breaks = NULL) +
-#   labs(x = "", y = "") +
-#   theme(legend.position = "bottom",
-#         panel.background = element_blank()) + labs(fill = "Amount of Contribution") + facet_wrap(~ cand_party_affiliation) + scale_fill_continuous(breaks = c(-1000, 214500,429046963), labels = c("-1k","214500K", "429000K"),low = "#B0E2FF", high = "#607B8B") + geom_text(aes(x = fifty_states$long, y = fifty_states$lat, label = state), data= sum_data, alpha = 1, color = "black")
-# 
-# mapping
-
-```
-# 
-# # add border boxes to AK/HI
-# #mapping + fifty_states_inset_boxes()
-# # ggplot(party_contribution, aes(x = cand_party_affiliation, y = contri_party)) + geom_bar(stat = "identity") + facet_wrap(~state)
-
-```
-
-
-
-
-
--------------------------------------------------------------------
-
-
-```{r, message=FALSE, warning=FALSE}
-
-# sum of general votes per state
-sum_vote<- house_elections %>%
-  group_by(state) %>%
-  summarise(sum_vote = sum(general_votes)) %>%
-  filter(state %in% fifty_states_name)
-
-
-# sum of contribution for each state
-sum_contribution <- contributions %>% 
-  group_by(state) %>%
-  summarise(sum_contribution = sum(transaction_amt))
-
-sum_data <- inner_join(sum_vote, sum_contribution)
-```
-
-
-```{r,message=FALSE, warning=FALSE}
-# changing the the observation name in the sum_data data frame
-sum_data$state[sum_data$state== "AK"] <- "alaska"
-sum_data$state[sum_data$state== "AL"] <- "alabama"
-sum_data$state[sum_data$state== "AR"] <- "arkansas"
-sum_data$state[sum_data$state== "AZ"] <- "arizona"
-sum_data$state[sum_data$state== "CA"] <- "california"
-sum_data$state[sum_data$state== "CO"] <- "colorado"
-sum_data$state[sum_data$state== "CT"] <- "connecticut"
-sum_data$state[sum_data$state== "DE"] <- "delaware"
-sum_data$state[sum_data$state== "FL"] <- "florida"
-sum_data$state[sum_data$state== "GA"] <- "georgia"
-sum_data$state[sum_data$state== "HI"] <- "hawaii"
-sum_data$state[sum_data$state== "IA"] <- "iowa"
-sum_data$state[sum_data$state== "ID"] <- "idaho"
-sum_data$state[sum_data$state== "IL"] <- "illinois"
-sum_data$state[sum_data$state== "IN"] <- "indiana"
-sum_data$state[sum_data$state== "KS"] <- "kansas"
-sum_data$state[sum_data$state== "KY"] <- "kentucky"
-sum_data$state[sum_data$state== "LA"] <- "louisiana"
-sum_data$state[sum_data$state== "MA"] <- "massachusetts"
-sum_data$state[sum_data$state== "MD"] <- "maryland"
-sum_data$state[sum_data$state== "ME"] <- "maine"
-sum_data$state[sum_data$state== "MI"] <- "michigan"
-sum_data$state[sum_data$state== "MN"] <- "minnesota"
-sum_data$state[sum_data$state== "MO"] <- "missouri"
-sum_data$state[sum_data$state== "MS"] <- "mississippi"
-sum_data$state[sum_data$state== "MT"] <- "montana"
-sum_data$state[sum_data$state== "NC"] <- "north carolina"
-sum_data$state[sum_data$state== "ND"] <- "north dakota"
-sum_data$state[sum_data$state== "NE"] <- "nebraska"
-sum_data$state[sum_data$state== "NH"] <- "new hampshire"
-sum_data$state[sum_data$state== "NJ"] <- "new jersey"
-sum_data$state[sum_data$state== "NM"] <- "new mexico"
-sum_data$state[sum_data$state== "NV"] <- "nevada"
-sum_data$state[sum_data$state== "NY"] <- "new york"
-sum_data$state[sum_data$state== "OH"] <- "ohio"
-sum_data$state[sum_data$state== "OK"] <- "oklahoma"
-sum_data$state[sum_data$state== "OR"] <- "oregon"
-sum_data$state[sum_data$state== "PA"] <- "pennsylvania"
-sum_data$state[sum_data$state== "RI"] <- "rhode island"
-sum_data$state[sum_data$state== "SC"] <- "south carolina"
-sum_data$state[sum_data$state== "SD"] <- "south dakota"
-sum_data$state[sum_data$state== "TN"] <- "tennessee"
-sum_data$state[sum_data$state== "TX"] <- "texas"
-sum_data$state[sum_data$state== "UT"] <- "utah"
-sum_data$state[sum_data$state== "VA"] <- "virginia"
-sum_data$state[sum_data$state== "VT"] <- "vermont"
-sum_data$state[sum_data$state== "WA"] <- "washington"
-sum_data$state[sum_data$state== "WI"] <- "wisconsin"
-sum_data$state[sum_data$state== "WV"] <- "west virginia"
-sum_data$state[sum_data$state== "WY"] <- "wyoming"
-
-```
-
+<<<<<<< HEAD
 
 
 
@@ -784,3 +647,5 @@ mapping + fifty_states_inset_boxes()
 # 
 # ggplot(party_votes, aes(x = party, y = vote_party)) + geom_bar(stat = "identity") + facet_wrap(~state)
 ```
+=======
+>>>>>>> 05d2a6c62ce681e479cb3496405356c665297ae3
