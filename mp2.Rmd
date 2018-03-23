@@ -253,7 +253,8 @@ dem_contri_guy <- candi_conti %>%
 
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# Computing the sum of the contribution for each candidate
 sum_contributions <- contributions %>%
   group_by(cand_id) %>%
   summarise(contribution = sum (transaction_amt))
@@ -262,13 +263,32 @@ lm_candi <- inner_join (house_elections, sum_contributions)
 
 model1 <- lm(general_votes ~ contribution, lm_candi)
 
-model1
+# model1
 
+# creating a scatter plot to see a relationship between contribution and general votes 
 ggplot(lm_candi, aes (x = contribution, y = general_votes)) + geom_point() + geom_smooth(method = "lm", se = 0,color = "cadetblue1")
 
 summary(model1)
 ```
 
 
-[^1] : https://github.com/stellali0311/sds192-mp2.git 
 
+We are using the candidates, committees, and contributions data frames from the Federal Election Commision data files from 2011-2012. From these data frames, we understand the candidates information such as their group and whether they are elected or not, and also the contribution information such as how much contribution was being made to which candidate by which contributor. We are interested to see within each states, among democratic and republican party, which receives more financial contribution, while also count the amount of elected candidate from each party within different states. In this way, we intend to see whether money is a crucial indicator of the number of candidates getting elected for each party.
+
+<br>
+
+First, we created maps for the total sum of contribution received by each candidate of the two respective parties. We mapped the amount of money as color saturation, while also showing the location of the contribution being received. On a larger scale, we expect to get a sense of which party is getting more financial support, and also the geographical information of where the money is relatively more concentrated. Following up, we created a side-by-side-bar plot to show the number of candidates being elected in each state. From these plots, combined with the maps we created earlier, we were curious about, whether the amount of money being raised is a more critical factor for the party to get its candidate elected, rather than the states’ own political leaning. 
+
+<br>
+
+By checking the side-by-side bar plots, we can confirm that most states with a strong political leaning elected candidates in alignment with their political view. A closer look at the maps reveals two outliers, Illinois in the “Total contribution to Democratic Party” and Massachusetts in “Total contribution to Republican Party”, which are getting the most contribution of all states. This observation makes sense, since these two states had the two most popular presidential candidates.
+
+<br>
+
+We also created a scatter plot, mapping the general votes to the y-axis, and the amount of contribution to the x-axis. As we can see there is a moderate positive linear relationship between these two variables, therefore the amount of money raised by individual candidates is still an essential factor in the election process. However, there are also quite a few outliers after x= 2*10^6, so we are assuming once the contribution exceeds a certain amount, it does not have as big of an effect on acquiring votes.
+
+
+
+https://github.com/stellali0311/sds192-mp2.git [^1]
+
+[^1]: Github link for our project
