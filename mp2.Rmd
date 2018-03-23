@@ -446,7 +446,7 @@ RD_party <- rate_rep_dem %>%
 ggplot(RD_party, aes(x = party, y = rate_winner)) + 
   geom_bar(stat = "identity") + 
   labs( x = "Party", y = "Ratio of elected candidates", title = name_arg) + 
-  theme(plot.title = element_text(face = "bold", size = 30))
+  theme(plot.title = element_text(face = "bold"))
 }
 
 RD_plots <- lapply(fifty_states_name, R_n_D)
