@@ -151,7 +151,7 @@ dem_mapping <- ggplot(dem, aes(map_id = cand_state)) +
   theme(legend.position = "bottom",
         panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
   labs(fill = "Amount of Contribution") +
-  scale_fill_continuous (breaks = c(4000, 215000000, 430000000), labels = c("4k","215000K", "430000K"), low = "#B0E2FF", high = "#607B8B")
+  scale_fill_continuous (breaks = c(4000, 215000000, 429046963), labels = c("4k","215000K", "490000K"), low = "#B0E2FF", high = "#607B8B")
 
 
 #mapping REP's contribution 
@@ -219,7 +219,6 @@ RD_plots <- lapply(fifty_states_name, R_n_D)
 # arranging the plots 
 do.call("grid.arrange", c(RD_plots, ncol=5))
 
-
 ```
 
 
@@ -229,8 +228,7 @@ do.call("grid.arrange", c(RD_plots, ncol=5))
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 
-#the person who received the most contribution in MA for Republican party
-
+# the person who received the most contribution in MA for Republican party
 rep_guy <- candi_conti %>%
   filter(cand_state == "MA") %>%
   group_by(cand_name) %>%
@@ -238,13 +236,26 @@ rep_guy <- candi_conti %>%
   arrange(desc(money)) 
 
 
-#who contributed most to Mitt Romney
-contri_guy <- candi_conti %>%
+# who contributed most to Mitt Romney
+rep_contri_guy <- candi_conti %>%
   filter(cand_state == "MA" & cand_party_affiliation =="REP" & cand_id == "P80003353") %>%
   group_by(name)%>%
   summarise(amt_contri = sum(transaction_amt)) %>%
   arrange(desc(amt_contri))
- 
+
+# the person who received the most contribution in MA for Democratic   
+dem_guy <- candi_conti %>%
+  filter(cand_state == "IL") %>%
+  group_by(cand_name) %>%
+  summarise(money = sum(transaction_amt)) %>%
+  arrange(desc(money))
+
+# who contributed most to Mitt Romney
+dem_contri_guy <- candi_conti %>%
+  filter(cand_state == "IL" & cand_party_affiliation =="DEM" & cand_id == "P80003338") %>%
+  group_by(name)%>%
+  summarise(amt_contri = sum(transaction_amt)) %>%
+  arrange(desc(amt_contri))
 
 ```
 
