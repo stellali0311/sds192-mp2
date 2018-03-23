@@ -260,7 +260,7 @@ sum_contributions <- contributions %>%
 
 lm_candi <- inner_join (house_elections, sum_contributions)
 
-model1 <- lm(general_votes ~ contributions, lm_candi)
+model1 <- lm(general_votes ~ contribution, lm_candi)
 
 model1
 
