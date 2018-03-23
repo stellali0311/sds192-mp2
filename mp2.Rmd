@@ -19,32 +19,22 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(fiftystater)
+library(gridExtra)
+```
+
+
+```{r}
+fifty_states_name <-c("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY" )
 
 house_elections <- house_elections %>%
-  rename(cand_id = fec_id)
+  rename(cand_id = fec_id) %>%
+  filter(state %in% fifty_states_name)
+
+candidates <- candidates %>%
+  filter(cand_state %in% fifty_states_name)
 
 ```
 
-The data set is from 2011-2012.
-canditates = Candidate Master File
-committees = Committee Master File
-contributions = Contributions to Candidates (and other expenditures) from committees
-
-
-
-
-```{r, message=FALSE, warning=FALSE}
-# all_contributions <- contributions %>% 
-#   group_by(cand_id) %>%
-#   summarize(contribuion_sum = sum(transaction_amt)) 
-#   
-# candidates_n_contributions <- inner_join(candidates, contributions)
-# 
-# house_elections <- house_elections %>%
-#   rename(cand_id = fec_id)
-# 
-# candidates_n_contributions %>% left_join(house_elections, by = "cand_id")
-```
 
 ```{r}
 house_elections <- house_elections %>%
@@ -55,92 +45,503 @@ house_elections$"winner <- ifelse(ge_winner == \"W\", 1, 0)"<- NULL
 
 
 
-```{r, message=FALSE, warning=FALSE}
-all_contributions <- contributions %>% 
-  group_by(cand_id) %>%
-  summarize(contribution_sum = sum(transaction_amt)) 
 
-condi_contri <- house_elections %>% left_join(all_contributions, by = "cand_id")
+- group by party contribution map per party 
+```{r}
+candi_conti <- inner_join(candidates, contributions)
+
+party_contribution <- candi_conti %>%
+  group_by(cand_state, cand_party_affiliation) %>%
+  summarise(contri_party = sum(transaction_amt)) 
 ```
 
-
-
-```{r, message=FALSE, warning=FALSE}
-#The contributors ranking from the most contributor to the least 
-most_contri <- contributions %>%
-  group_by(cmte_id) %>%
-  summarise(sum_trans = sum(transaction_amt)) %>%
-  arrange(desc(sum_trans))
-
-most_can <- contributions %>%
-  group_by(cmte_id) %>%
-  summarise(sum_can = sum(n_distinct(cand_id))) %>%
-  arrange(desc(sum_can))
-
-# the data set which describes the most contribution and how many candidates the contributors are supporting 
-money_n_ppl <- inner_join (most_contri, most_can) 
-
-# Looking at the contributor (top 10) and the candidates elecition results
-top_10_contributors <- money_n_ppl %>%
-  head(10)
-
-top_10 <- top_10_contributors$cmte_id
-
-
-
-top_10_candi <- contributions %>%
-  filter(cmte_id %in% top_10)
-
-
-data_sum <- contributions %>% inner_join (house_elections, by = "cand_id")
-
+```{r}
+# changing the the observation name in the sum_data data frame
+party_contribution$cand_state[party_contribution$cand_state== "AK"] <- "alaska"
+party_contribution$cand_state[party_contribution$cand_state== "AL"] <- "alabama"
+party_contribution$cand_state[party_contribution$cand_state== "AR"] <- "arkansas"
+party_contribution$cand_state[party_contribution$cand_state== "AZ"] <- "arizona"
+party_contribution$cand_state[party_contribution$cand_state== "CA"] <- "california"
+party_contribution$cand_state[party_contribution$cand_state== "CO"] <- "colorado"
+party_contribution$cand_state[party_contribution$cand_state== "CT"] <- "connecticut"
+party_contribution$cand_state[party_contribution$cand_state== "DE"] <- "delaware"
+party_contribution$cand_state[party_contribution$cand_state== "FL"] <- "florida"
+party_contribution$cand_state[party_contribution$cand_state== "GA"] <- "georgia"
+party_contribution$cand_state[party_contribution$cand_state== "HI"] <- "hawaii"
+party_contribution$cand_state[party_contribution$cand_state== "IA"] <- "iowa"
+party_contribution$cand_state[party_contribution$cand_state== "ID"] <- "idaho"
+party_contribution$cand_state[party_contribution$cand_state== "IL"] <- "illinois"
+party_contribution$cand_state[party_contribution$cand_state== "IN"] <- "indiana"
+party_contribution$cand_state[party_contribution$cand_state== "KS"] <- "kansas"
+party_contribution$cand_state[party_contribution$cand_state== "KY"] <- "kentucky"
+party_contribution$cand_state[party_contribution$cand_state== "LA"] <- "louisiana"
+party_contribution$cand_state[party_contribution$cand_state== "MA"] <- "massachusetts"
+party_contribution$cand_state[party_contribution$cand_state== "MD"] <- "maryland"
+party_contribution$cand_state[party_contribution$cand_state== "ME"] <- "maine"
+party_contribution$cand_state[party_contribution$cand_state== "MI"] <- "michigan"
+party_contribution$cand_state[party_contribution$cand_state== "MN"] <- "minnesota"
+party_contribution$cand_state[party_contribution$cand_state== "MO"] <- "missouri"
+party_contribution$cand_state[party_contribution$cand_state== "MS"] <- "mississippi"
+party_contribution$cand_state[party_contribution$cand_state== "MT"] <- "montana"
+party_contribution$cand_state[party_contribution$cand_state== "NC"] <- "north carolina"
+party_contribution$cand_state[party_contribution$cand_state== "ND"] <- "north dakota"
+party_contribution$cand_state[party_contribution$cand_state== "NE"] <- "nebraska"
+party_contribution$cand_state[party_contribution$cand_state== "NH"] <- "new hampshire"
+party_contribution$cand_state[party_contribution$cand_state== "NJ"] <- "new jersey"
+party_contribution$cand_state[party_contribution$cand_state== "NM"] <- "new mexico"
+party_contribution$cand_state[party_contribution$cand_state== "NV"] <- "nevada"
+party_contribution$cand_state[party_contribution$cand_state== "NY"] <- "new york"
+party_contribution$cand_state[party_contribution$cand_state== "OH"] <- "ohio"
+party_contribution$cand_state[party_contribution$cand_state== "OK"] <- "oklahoma"
+party_contribution$cand_state[party_contribution$cand_state== "OR"] <- "oregon"
+party_contribution$cand_state[party_contribution$cand_state== "PA"] <- "pennsylvania"
+party_contribution$cand_state[party_contribution$cand_state== "RI"] <- "rhode island"
+party_contribution$cand_state[party_contribution$cand_state== "SC"] <- "south carolina"
+party_contribution$cand_state[party_contribution$cand_state== "SD"] <- "south dakota"
+party_contribution$cand_state[party_contribution$cand_state== "TN"] <- "tennessee"
+party_contribution$cand_state[party_contribution$cand_state== "TX"] <- "texas"
+party_contribution$cand_state[party_contribution$cand_state== "UT"] <- "utah"
+party_contribution$cand_state[party_contribution$cand_state== "VA"] <- "virginia"
+party_contribution$cand_state[party_contribution$cand_state== "VT"] <- "vermont"
+party_contribution$cand_state[party_contribution$cand_state== "WA"] <- "washington"
+party_contribution$cand_state[party_contribution$cand_state== "WI"] <- "wisconsin"
+party_contribution$cand_state[party_contribution$cand_state== "WV"] <- "west virginia"
+party_contribution$cand_state[party_contribution$cand_state== "WY"] <- "wyoming"
 ```
 
+```{r}
+
+parties <- c("CON", "DEM", "DFL", "GRE", "IAP", "IND", "LIB", "NNE", "NPA", "OTH", "REP", "SUS", "SWP", "UNK", "WFP")
 
 
-```{r, message=FALSE, warning=FALSE}
-# which contributors supported the most elected candidates 
-winner_num <- data_sum %>%
-  filter(winner == "1") %>%
-  group_by(cmte_id) %>%
-  summarise(sum_win = sum(n_distinct(cand_id)))
+num_party <- party_contribution %>%
+  group_by(cand_party_affiliation) %>%
+  summarise(num = n())
   
+min_contri <- party_contribution %>%
+  group_by(cand_party_affiliation) %>%
+  summarise(mini = min(contri_party))
 
-# %>% 
-#   group_by(cmte_id) %>%
-#   summarise(n_winner = sum(n_distinct(winner)))
+max_contri <- party_contribution %>%
+  group_by(cand_party_affiliation) %>%
+  summarise(maxi = max(contri_party))
 
-# the sum of candidates who the contributor is suporting 
-all_sum <- data_sum %>%
-  group_by(cmte_id) %>%
-  summarise(sum_can = sum(n_distinct(cand_id)))
+mid_contri <- inner_join(min_contri,max_contri) %>%
+  mutate(midd = (mini + maxi)/2)
 
-# the sum of candidates who has been elected
-rate_elected <- inner_join(winner_num, all_sum) %>%
-  mutate(rate = sum_win/sum_can) %>%
-  arrange(desc(sum_win)) %>%
-  arrange(desc(rate)) 
+party_contribution <- inner_join(party_contribution, mid_contri)
+
+```
+```{r}
+# each party map for contribution 
+#""
+non <- party_contribution %>% filter(cand_party_affiliation == "")
+non_mapping <- ggplot(non, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to No Party Name") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (low = "#B0E2FF", high = "#607B8B")
+
+#CON
+con <- party_contribution %>% filter(cand_party_affiliation == "CON")
+con_mapping <- ggplot(con, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Constitution") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (low = "#B0E2FF", high = "#607B8B")
+
+
+#DEM
+dem <- party_contribution %>% filter(cand_party_affiliation == "DEM")
+dem_mapping <- ggplot(dem, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Democratic") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(4000, 215000000, 430000000), labels = c("4k","215000K", "430000K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#DFL 
+dfl <- party_contribution %>% filter(cand_party_affiliation == "DFL")
+dfl_mapping <- ggplot(dfl, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Democratic Farmer Labor Party") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (low = "#B0E2FF", high = "#607B8B")
+
+
+#GRE
+gre <- party_contribution %>% filter(cand_party_affiliation == "GRE")
+gre_mapping <- ggplot(gre, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Green") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(250, 4400, 8608), labels = c("0.25K", "4.4K", "8.6K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#IAP
+iap <- party_contribution %>% filter(cand_party_affiliation == "IAP")
+iap_mapping <- ggplot(iap, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Independent American Party") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (low = "#B0E2FF", high = "#607B8B")
+
+
+#IND
+ind <- party_contribution %>% filter(cand_party_affiliation == "IND")
+ind_mapping <- ggplot(gre, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Independent") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(-1000, 2000000, 4175660), labels = c("-1K", "2000K", "4180K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#LIB
+lib <- party_contribution %>% filter(cand_party_affiliation == "LIB")
+lib_mapping <- ggplot(lib, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Libertarian") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(800, 280000, 555314), labels = c("0.8K", "280K", "555K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#NNE
+nne <- party_contribution %>% filter(cand_party_affiliation == "NNE")
+nne_mapping <- ggplot(lib, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to None") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(11725, 320000, 520000), labels = c("11K", "32K", "52K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#NPA
+npa <- party_contribution %>% filter(cand_party_affiliation == "NNE")
+npa_mapping <- ggplot(npa, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to No party Affiliation") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (low = "#B0E2FF", high = "#607B8B")
+
+
+#OTH
+oth <- party_contribution %>% filter(cand_party_affiliation == "OTH")
+oth_mapping <- ggplot(oth, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Other") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(74, 58000, 116637), labels = c("0.074K", "58K", "116K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#REP
+rep <- party_contribution %>% filter(cand_party_affiliation == "REP")
+rep_mapping <- ggplot(rep, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Republican") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(1050, 99700000, 199441933), labels = c("1K", "99700K", "19944K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#SUS
+sus <- party_contribution %>% filter(cand_party_affiliation == "SUS")
+sus_mapping <- ggplot(sus, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Socialist Party") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(250, 270, 299), labels = c("0.25K", "0.27K", "0.3K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#SWP
+swp <- party_contribution %>% filter(cand_party_affiliation == "SWP")
+swp_mapping <- ggplot(swp, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Socialist Party") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (low = "#B0E2FF", high = "#607B8B")
+
+
+#UNK
+unk <- party_contribution %>% filter(cand_party_affiliation == "UNK")
+unk_mapping <- ggplot(unk, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to UNK") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (breaks = c(100, 140000, 280000), labels = c("0.1K", "140K", "280K"), low = "#B0E2FF", high = "#607B8B")
+
+
+#WEP
+wfp <- party_contribution %>% filter(cand_party_affiliation == "WFP")
+wfp_mapping <- ggplot(wfp, aes(map_id = cand_state)) +
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = contri_party), map = fifty_states) +
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) +
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "", title = "Contribution to Working Families Party") +
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
+  labs(fill = "Amount of Contribution") +
+  scale_fill_continuous (low = "#B0E2FF", high = "#607B8B")
+
+```
+
+```{r}
+grid.arrange( non_mapping, con_mapping, dem_mapping, dfl_mapping, gre_mapping, iap_mapping, ind_mapping, lib_mapping, nne_mapping, npa_mapping, oth_mapping, rep_mapping, sus_mapping, swp_mapping, unk_mapping, wfp_mapping, nrow = 9)
+
+# non_mapping
+# con_mapping
+# dem_mapping
+# dfl_mapping
+# gre_mapping
+# iap_mapping
+# ind_mapping
+# lib_mapping
+# nne_mapping
+# npa_mapping
+# oth_mapping
+# rep_mapping
+# sus_mapping
+# swp_mapping
+# unk_mapping
+# wfp_mapping
+```
+
+```{r}
+# #make function
+# 
+#   
+# contribution_party <- function(name_arg) {
+#   
+# all_party <- party_contribution %>%
+#   filter(cand_party_affiliation == name_arg)
+# 
+# 
+# 
+# mapping <- ggplot(all_party, aes(map_id = cand_state)) + 
+#   # map points to the fifty_states shape data
+#   geom_map(aes(fill = contri_party), map = fifty_states) + 
+#   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+#   coord_map() +
+#   scale_x_continuous(breaks = NULL) + 
+#   scale_y_continuous(breaks = NULL) +
+#   labs(x = "", y = "", title = name_arg) +
+#   theme(legend.position = "bottom", 
+#         panel.background = element_blank()) + labs(fill = "Amount of Contribution") 
+# 
+# 
+# }
+# 
+# #
+# #+ geom_text(data = fifty_statesaes(x = long, y = fifty_states$lat, label = state)) + geom_text(data= sum_data, alpha = 1, color = "black") + scale_fill_continuous( low = "#B0E2FF", high = "#607B8B")
+# 
+# party_plots <- lapply(parties, contribution_party)
+# 
+# party_plots
+```
+
+
+- see choose one party and see if they have more winner or not 
+```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.width = 30, fig.height= 15}
+
+target <- c("R", "D")
+
+one_rep_dem <- house_elections %>%
+  filter(party %in% target) 
+
+#see parties from republican and democrats the rate of elected per state
+rate_rep_dem <- house_elections %>%
+  filter(party %in% target) %>%
+  group_by(state, party) %>%
+  summarise(rate_winner = sum(winner)/n() * 100) 
+
+#function
+R_n_D <- function(name_arg) {
   
+RD_party <- rate_rep_dem %>%
+   filter(state == name_arg)
+  
+ggplot(RD_party, aes(x = party, y = rate_winner)) + 
+  geom_bar(stat = "identity") + 
+  labs( x = "Party", y = "Ratio of elected candidates", title = name_arg) + 
+  theme(plot.title = element_text(face = "bold", size = 30))
+}
 
-# a data set that contains the rate of winning the election and the amount of contribution 
-sum_contri <- inner_join(rate_elected, most_contri)
-# => there's no relationship between contribution and the rate of the person who will get elected 
+RD_plots <- lapply(fifty_states_name, R_n_D)
+
+RD_plots
+
+do.call("grid.arrange", c(RD_plots, ncol=5))
+
+#mapping if there is more R winning than D the map turns red and the other way it is blue
+
+# mapping <- ggplot(all_party, aes(map_id = cand_state)) + 
+#   # map points to the fifty_states shape data
+#   geom_map(aes(fill = contri_party), map = fifty_states) + 
+#   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+#   coord_map() +
+#   scale_x_continuous(breaks = NULL) + 
+#   scale_y_continuous(breaks = NULL) +
+#   labs(x = "", y = "", title = name_arg) +
+#   theme(legend.position = "bottom", 
+#         panel.background = element_blank()) + labs(fill = "Amount of Contribution") 
+
 ```
 
-```{r, message=FALSE, warning=FALSE}
-sum_contri %>% filter(sum_win > 20)
+
+
+
+
+
+
+
+-------------------------------------------------------------------
+
+
+
+
+
+
+```{r}
+# mapping <- ggplot(party_contribution, aes(map_id = cand_state)) +
+#   # map points to the fifty_states shape data
+#   geom_map(aes(fill = contri_party), map = fifty_states) +
+#   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+#   coord_map() +
+#   scale_x_continuous(breaks = NULL) +
+#   scale_y_continuous(breaks = NULL) +
+#   labs(x = "", y = "") +
+#   theme(legend.position = "bottom",
+#         panel.background = element_blank()) + labs(fill = "Amount of Contribution") + facet_wrap(~ cand_party_affiliation) + scale_fill_continuous(breaks = c(-1000, 214500,429046963), labels = c("-1k","214500K", "429000K"),low = "#B0E2FF", high = "#607B8B") + geom_text(aes(x = fifty_states$long, y = fifty_states$lat, label = state), data= sum_data, alpha = 1, color = "black")
+# 
+# mapping
+
+```
+# 
+# # add border boxes to AK/HI
+# #mapping + fifty_states_inset_boxes()
+# # ggplot(party_contribution, aes(x = cand_party_affiliation, y = contri_party)) + geom_bar(stat = "identity") + facet_wrap(~state)
+
 ```
 
 
 
+
+
+-------------------------------------------------------------------
+
+
 ```{r, message=FALSE, warning=FALSE}
-fifty_states <-c("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY" )
 
 # sum of general votes per state
 sum_vote<- house_elections %>%
   group_by(state) %>%
   summarise(sum_vote = sum(general_votes)) %>%
-  filter(state %in% fifty_states)
+  filter(state %in% fifty_states_name)
 
 
 # sum of contribution for each state
@@ -208,64 +609,160 @@ sum_data$state[sum_data$state== "WY"] <- "wyoming"
 ```
 
 
+
+
 ```{r, message=FALSE, warning=FALSE}
-# Mapping
+# all_contributions <- contributions %>% 
+#   group_by(cand_id) %>%
+#   summarize(contribution_sum = sum(transaction_amt)) 
+# 
+# condi_contri <- house_elections %>% left_join(all_contributions, by = "cand_id")
+```
 
 
+```{r, message=FALSE, warning=FALSE}
+# #The contributors ranking from the most contributor to the least 
+# most_contri <- contributions %>%
+#   group_by(cmte_id) %>%
+#   summarise(sum_trans = sum(transaction_amt)) %>%
+#   arrange(desc(sum_trans))
+# 
+# most_can <- contributions %>%
+#   group_by(cmte_id) %>%
+#   summarise(sum_can = sum(n_distinct(cand_id))) %>%
+#   arrange(desc(sum_can))
+# 
+# # the data set which describes the most contribution and how many candidates the contributors are supporting 
+# money_n_ppl <- inner_join (most_contri, most_can) 
+# 
+# # Looking at the contributor (top 10) and the candidates elecition results
+# top_10_contributors <- money_n_ppl %>%
+#   head(10)
+# 
+# top_10 <- top_10_contributors$cmte_id
+# 
+# 
+# 
+# top_10_candi <- contributions %>%
+#   filter(cmte_id %in% top_10)
+# 
+# 
+# data_sum <- contributions %>% inner_join (house_elections, by = "cand_id")
+
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+# # which contributors supported the most elected candidates 
+# winner_num <- data_sum %>%
+#   filter(winner == "1") %>%
+#   group_by(cmte_id) %>%
+#   summarise(sum_win = sum(n_distinct(cand_id)))
+#   
+# 
+# # %>% 
+# #   group_by(cmte_id) %>%
+# #   summarise(n_winner = sum(n_distinct(winner)))
+# 
+# # the sum of candidates who the contributor is suporting 
+# all_sum <- data_sum %>%
+#   group_by(cmte_id) %>%
+#   summarise(sum_can = sum(n_distinct(cand_id)))
+# 
+# # the sum of candidates who has been elected
+# rate_elected <- inner_join(winner_num, all_sum) %>%
+#   mutate(rate = sum_win/sum_can) %>%
+#   arrange(desc(sum_win)) %>%
+#   arrange(desc(rate)) 
+#   
+# 
+# # a data set that contains the rate of winning the election and the amount of contribution 
+# sum_contri <- inner_join(rate_elected, most_contri)
+# # => there's no relationship between contribution and the rate of the person who will get elected 
+```
+
+```{r, message=FALSE, warning=FALSE}
+# sum_contri %>% filter(sum_win > 20)
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+# all_contributions <- contributions %>% 
+#   group_by(cand_id) %>%
+#   summarize(contribuion_sum = sum(transaction_amt)) 
+#   
+# candidates_n_contributions <- inner_join(candidates, contributions)
+# 
+# house_elections <- house_elections %>%
+#   rename(cand_id = fec_id)
+# 
+# candidates_n_contributions %>% left_join(house_elections, by = "cand_id")
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+# # Mapping
+# 
+# 
+# # data("fifty_states") # this line is optional due to lazy data loading
+# # 
+# crimes <- data.frame(state = tolower(rownames(USArrests)), USArrests)
+# # 
+# # # map_id creates the aesthetic mapping to the state name column in your data
+# # p <- ggplot(crimes, aes(map_id = state)) + 
+# #   # map points to the fifty_states shape data
+# #   geom_map(aes(fill = Assault), map = fifty_states) + 
+# #   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+# #   coord_map() +
+# #   scale_x_continuous(breaks = NULL) + 
+# #   scale_y_continuous(breaks = NULL) +
+# #   labs(x = "", y = "") +
+# #   theme(legend.position = "bottom", 
+# #         panel.background = element_blank())
+# # 
+# # p
+# # # add border boxes to AK/HI
+# # p + fifty_states_inset_boxes() 
+# 
+# ```
+
+```{r, message=FALSE, warning=FALSE}
 # data("fifty_states") # this line is optional due to lazy data loading
 # 
-crimes <- data.frame(state = tolower(rownames(USArrests)), USArrests)
-# 
 # # map_id creates the aesthetic mapping to the state name column in your data
-# p <- ggplot(crimes, aes(map_id = state)) + 
+# mapping <- ggplot(sum_data, aes(map_id = state)) + 
 #   # map points to the fifty_states shape data
-#   geom_map(aes(fill = Assault), map = fifty_states) + 
+#   geom_map(aes(fill = sum_vote), map = fifty_states) + 
 #   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
 #   coord_map() +
 #   scale_x_continuous(breaks = NULL) + 
 #   scale_y_continuous(breaks = NULL) +
 #   labs(x = "", y = "") +
 #   theme(legend.position = "bottom", 
-#         panel.background = element_blank())
-# 
-# p
+#         panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(250000, 6270000,12204357), labels = c("240k","6270K", "12300K"),low = "#9BF5FF", high = "#53868B")
+#   
 # # add border boxes to AK/HI
-# p + fifty_states_inset_boxes() 
-
-```
-
-```{r, message=FALSE, warning=FALSE}
-data("fifty_states") # this line is optional due to lazy data loading
-
-# map_id creates the aesthetic mapping to the state name column in your data
-mapping <- ggplot(sum_data, aes(map_id = state)) + 
-  # map points to the fifty_states shape data
-  geom_map(aes(fill = sum_vote), map = fifty_states) + 
-  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
-  coord_map() +
-  scale_x_continuous(breaks = NULL) + 
-  scale_y_continuous(breaks = NULL) +
-  labs(x = "", y = "") +
-  theme(legend.position = "bottom", 
-        panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(250000, 6270000,12204357), labels = c("240k","6270K", "12300K"),low = "#9BF5FF", high = "#53868B")
-  
-# add border boxes to AK/HI
-mapping + fifty_states_inset_boxes()
+# mapping + fifty_states_inset_boxes()
 
 #not include VI(virfin islands), PR(Puerto Rico), MP(northern Mariana Islands), GU (Guam), DC(district of columbia), AS(?)
 ```
 
+
+- contribution sum of the states 
 ```{r, message=FALSE, warning=FALSE}
-mapping <- ggplot(sum_data, aes(map_id = state)) + 
+mapping <- ggplot(sum_data, aes(map_id = state)) +
   # map points to the fifty_states shape data
-  geom_map(aes(fill = sum_contribution), map = fifty_states) + 
+  geom_map(aes(fill = sum_contribution), map = fifty_states) +
   expand_limits(x = fifty_states$long, y = fifty_states$lat) +
   coord_map() +
-  scale_x_continuous(breaks = NULL) + 
+  scale_x_continuous(breaks = NULL) +
   scale_y_continuous(breaks = NULL) +
   labs(x = "", y = "") +
-  theme(legend.position = "bottom", 
-        panel.background = element_blank()) + labs(fill = "Number of Votes") + scale_fill_continuous(breaks = c(1170000, 214200000,425544900), labels = c("240k","214200K", "426000K"),low = "#B0E2FF", high = "#607B8B") 
+  theme(legend.position = "bottom",
+        panel.background = element_blank()) + labs(fill = "Amount of Contribution") + scale_fill_continuous(breaks = c(1170000, 214200000,425544900), labels = c("240k","214200K", "426000K"),low = "#B0E2FF", high = "#607B8B")
+
+# + geom_text(aes(x = fifty_states$long, y = fifty_states$lat, label = state), data= sum_data, alpha = 1, color = "black")
+
 
 
 
@@ -275,3 +772,15 @@ mapping + fifty_states_inset_boxes()
 ```
 
 
+```{r}
+# # votes per state per party
+# party_votes <- house_elections %>%
+#   filter(state %in% fifty_states)
+# 
+# # %>%
+# #   group_by(state, party) %>%
+# #   summarise(vote_party = sum(general_votes)) 
+#   
+# 
+# ggplot(party_votes, aes(x = party, y = vote_party)) + geom_bar(stat = "identity") + facet_wrap(~state)
+```
