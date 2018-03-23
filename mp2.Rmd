@@ -145,7 +145,7 @@ dem_mapping <- ggplot(dem, aes(map_id = cand_state)) +
   coord_map() +
   scale_x_continuous(breaks = NULL) +
   scale_y_continuous(breaks = NULL) +
-  labs(x = "", y = "", title = "Contribution to Democratic") +
+  labs(x = "", y = "", title = "Total Contribution to Democratic Party") +
   theme(legend.position = "bottom",
         panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
   labs(fill = "Amount of Contribution") +
@@ -161,7 +161,7 @@ rep_mapping <- ggplot(rep, aes(map_id = cand_state)) +
   coord_map() +
   scale_x_continuous(breaks = NULL) +
   scale_y_continuous(breaks = NULL) +
-  labs(x = "", y = "", title = "Contribution to Republican") +
+  labs(x = "", y = "", title = "Total Contribution to Republican Party") +
   theme(legend.position = "bottom",
         panel.background = element_blank(), plot.title = element_text(face = "bold")) + 
   labs(fill = "Amount of Contribution") +
@@ -254,8 +254,19 @@ dem_contri_guy <- candi_conti %>%
 ```
 
 ```{r}
+sum_contributions <- contributions %>%
+  group_by(cand_id) %>%
+  summarise(contribution = sum (transaction_amt))
 
-model1 <- lm()
+lm_candi <- inner_join (house_elections, sum_contributions)
+
+model1 <- lm(general_votes ~ contributions, lm_candi)
+
+model1
+
+ggplot(lm_candi, aes (x = contribution, y = general_votes)) + geom_point() + geom_smooth(method = "lm", se = 0,color = "cadetblue1")
+
+summary(model1)
 ```
 
 
