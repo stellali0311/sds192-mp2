@@ -7,9 +7,6 @@ output:
     code_folding: hide
 ---
 
-
-
-
 ```{r, include=FALSE, messages=FALSE, warning=FALSE}
 load("house_elections.rda")
 load("candidates.rda")
@@ -40,16 +37,14 @@ candidates <- candidates %>%
 
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
-# adding a column that say win = 1 and lose = 0
+# adding an indicator variable that say win = 1 and lose = 0
 house_elections <- house_elections %>%
   mutate(winner = ifelse(ge_winner == "W", 1, 0)) 
 
-# another 2 unnecessity columns appears so unshow it
+# to unshow 2 unnecessity columns 
 house_elections$"ifelse(ge_winner == \"W\", 1, 0)"<- NULL
 house_elections$"winner <- ifelse(ge_winner == \"W\", 1, 0)"<- NULL
 ```
-
-
 
 
 - group by party contribution map per party 
@@ -140,10 +135,11 @@ mid_contri <- inner_join(min_contri,max_contri) %>%
 party_contribution <- inner_join(party_contribution, mid_contri)
 
 ```
-```{r, message=FALSE, warning=FALSE, echo=FALSE}
-# each party map for contribution 
 
-#mapping ""'s contribution 
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+# create a map showing total contribution for each party 
+
+# mapping "no party name" contribution
 non <- party_contribution %>% filter(cand_party_affiliation == "")
 non_mapping <- ggplot(non, aes(map_id = cand_state)) +
   # map points to the fifty_states shape data
